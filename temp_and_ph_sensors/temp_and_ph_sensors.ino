@@ -20,7 +20,7 @@
  * - pH Sensor GND -> GND
  */
 
-#include <WiFi.h>
+#include <WiFiManager.h>
 #include <Firebase_ESP_Client.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -32,10 +32,6 @@
 #include "addons/TokenHelper.h"
 // Provide the Firestore payload printing info
 #include "addons/RTDBHelper.h"
-
-// WiFi credentials
-#define WIFI_SSID "iPhone de Ulysse"
-#define WIFI_PASSWORD "dragon31"
 
 // Firebase project credentials
 #define API_KEY "AIzaSyAg1IFaz-1v6wzq3MMX7W6ryMdNtOWjVy8"
@@ -112,16 +108,17 @@ void setup() {
   Serial.println();
   
   // Connect to WiFi
-  Serial.print("Connecting to WiFi");
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(300);
+  WiFiManager wm;
+  bool res;
+  res = wm.autoConnect("AutoConnectAP", "kombucha");
+
+  if(!res) {
+    Serial.println("Failed to connect");
+  } 
+  else {
+    //if you get here you have connected to the WiFi    
+    Serial.println("connected...yeey :)");
   }
-  Serial.println();
-  Serial.print("Connected with IP: ");
-  Serial.println(WiFi.localIP());
-  Serial.println();
 
   // Configure NTP time synchronization
   configTime(-18000, 3600, "pool.ntp.org", "time.nist.gov");  // EST: -5 hours (-18000 sec), DST: +1 hour (3600 sec)
